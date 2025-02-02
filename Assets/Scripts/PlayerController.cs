@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 0;
     public TextMeshProUGUI countText;
+    public GameObject winTextObject;
     private Rigidbody rb;
     private int count;
     private float movementX;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        winTextObject.SetActive(false);
         count = 0;
         rb = GetComponent<Rigidbody>();
         SetCountText();
@@ -31,6 +33,12 @@ public class PlayerController : MonoBehaviour
     void SetCountText()
     {
         countText.text = "Count: " + count.ToString();
+        if (count >= 8)
+        {
+            winTextObject.SetActive(true);
+            Destroy(GameObject.FindGameObjectWithTag("Enemy"));
+        }
+
     }
 
     private void FixedUpdate()
@@ -48,6 +56,18 @@ public class PlayerController : MonoBehaviour
             SetCountText();
         }
 
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // Destroy the current object
+            Destroy(gameObject);
+            // Update the winText to display "You Lose!"
+            winTextObject.gameObject.SetActive(true);
+            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
+        }
     }
 
 }
